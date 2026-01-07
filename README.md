@@ -158,6 +158,98 @@ kvk-scraper/
 - Be respectful of the KVK website - avoid excessive scraping requests
 - Each page typically contains ~10 results
 
+## Deployment
+
+### Deploying Frontend to Vercel
+
+The frontend can be deployed to Vercel while running the backend locally.
+
+#### Prerequisites
+- Vercel account
+- Vercel CLI (optional): `npm install -g vercel`
+
+#### Step 1: Configure Environment Variables
+
+1. Copy the environment template:
+   ```bash
+   cp .env.example frontend/.env
+   ```
+
+2. For **local development**, keep the default:
+   ```env
+   VITE_API_URL=http://localhost:3001
+   ```
+
+3. For **production** (deployed frontend connecting to your local backend), you'll need to expose your local backend using one of these options:
+
+   **Option A: ngrok (Recommended for testing)**
+   ```bash
+   # Install ngrok: https://ngrok.com/download
+   ngrok http 3001
+   # Use the provided HTTPS URL in Vercel environment variables
+   ```
+
+   **Option B: Cloudflare Tunnel**
+   ```bash
+   # Install cloudflared
+   cloudflared tunnel --url http://localhost:3001
+   ```
+
+   **Option C: Public IP/VPS**
+   - Deploy backend to a VPS with a public IP
+   - Ensure port 3001 is accessible
+
+#### Step 2: Deploy to Vercel
+
+**Using Vercel Dashboard:**
+1. Go to [vercel.com](https://vercel.com)
+2. Click "New Project"
+3. Import your Git repository
+4. Vercel will auto-detect the `vercel.json` configuration
+5. Add environment variable:
+   - Key: `VITE_API_URL`
+   - Value: Your backend URL (e.g., `https://your-ngrok-url.ngrok.io` or `http://your-ip:3001`)
+6. Click "Deploy"
+
+**Using Vercel CLI:**
+```bash
+# From project root
+vercel
+
+# Set environment variable
+vercel env add VITE_API_URL
+
+# Deploy to production
+vercel --prod
+```
+
+#### Step 3: Configure Backend CORS
+
+Update your backend's `.env` file to allow requests from your Vercel deployment:
+
+```env
+PORT=3001
+FRONTEND_URL=https://your-vercel-app.vercel.app
+```
+
+Or modify `backend/src/server.ts` to allow multiple origins:
+
+```typescript
+app.use(cors({
+    origin: [
+        'http://localhost:5173',
+        'https://your-vercel-app.vercel.app'
+    ]
+}));
+```
+
+#### Important Notes
+
+- **CORS**: Ensure your backend allows requests from your Vercel domain
+- **HTTPS**: If using ngrok or similar, you'll get HTTPS automatically
+- **Security**: For production, consider adding authentication to your backend API
+- **Tunneling**: ngrok free tier sessions expire after 2 hours; restart as needed
+
 ## License
 
 MIT
