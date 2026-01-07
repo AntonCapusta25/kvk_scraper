@@ -10,7 +10,7 @@ interface SearchFormProps {
 export const SearchForm: React.FC<SearchFormProps> = ({ onSearch, isLoading }) => {
     const [query, setQuery] = useState('');
     const [category, setCategory] = useState<'all' | 'trade-register' | 'advice'>('all');
-    const [maxPages, setMaxPages] = useState(5);
+    const [maxPages, setMaxPages] = useState(999);
     const [filters, setFilters] = useState({
         mainBranches: false,
         legalPersons: false,
@@ -142,13 +142,12 @@ export const SearchForm: React.FC<SearchFormProps> = ({ onSearch, isLoading }) =
                         id="max-pages"
                         type="number"
                         min="1"
-                        max="20"
                         value={maxPages}
                         onChange={(e) => setMaxPages(parseInt(e.target.value) || 1)}
                         className="number-input"
                         disabled={isLoading}
                     />
-                    <small>Each page contains approximately 10 results</small>
+                    <small>Each page contains approximately 10 results. Set to 999 for unlimited scraping.</small>
                 </div>
 
                 {/* Submit Button */}

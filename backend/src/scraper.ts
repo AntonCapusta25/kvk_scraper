@@ -76,7 +76,7 @@ export class KVKScraper {
             console.log('✓ Results loaded');
 
             // Scrape pages
-            const maxPages = params.maxPages || 5;
+            const maxPages = params.maxPages || 999;
             let currentPage = 1;
 
             while (currentPage <= maxPages) {
